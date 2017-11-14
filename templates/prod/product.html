@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}Product: {{object.name}}{% endblock %}
+{% block content %}
+<section>
+<p>Product: {{ object.name }}</p>
+<div>Price: {{ object.price }}</div>
+    <div>Liked: {{ liked }}</div>
+<div>Description: {{ object.description }}</div>
+ <p>
+            <small>Product added: {{ object.created_at }}</small>
+<a href="/product/iphonex/vote">voteiphonex</a>
+            <label for="vote">{{ object.rate }}</label><br>
+        </form>
+        </p>
+        <hr>
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+<p>Comments</p>
+    {% for comment in comments %}
+<div>{{ comment.user }}</div>
+        <div>{{ comment.message }}</div>
+        <br>
+{% endfor %}
+<div>
+<form method='post' class="form" role="form" action="{% url 'product' object.slug %}">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+            <div class="form-group">
+                {{ form.user.label_tag }} {{ form.user }}
+            </div>
+            <div class="form-group">
+                {{ form.product.label_tag }} {{ form.product }}
+            </div>
+            <div class="form-group">
+                {{ form.message.label_tag }} {{ form.message }}
+            </div>
+            <div class="form-group">
+                {{ form.rate.label_tag }} {{ form.rate }}
+            </div>
+    <br>
+    <input type="submit" class="btn btn-primary" value="Send"/>
+    <br>
+</form>
+</div>
+
+</section>
+{% endblock %}
