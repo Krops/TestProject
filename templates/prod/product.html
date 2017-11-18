@@ -2,50 +2,88 @@
 {% block title %}Product: {{object.name}}{% endblock %}
 {% block content %}
 <section>
-<p>Product: {{ object.name }}</p>
-<div>Price: {{ object.price }}</div>
-    <div>Liked: {{ liked }}</div>
-<div>Description: {{ object.description }}</div>
- <p>
-            <small>Product added: {{ object.created_at }}</small>
-<a href="/product/iphonex/vote">voteiphonex</a>
-            <label for="vote">{{ object.rate }}</label><br>
-        </form>
-        </p>
-        <hr>
-        {% if messages %}
+        <div class="container">
+        <div class="row">
+			<div class="col-md-8">
+				<div class="panel panel-default  panel--styled">
+					<div class="panel-body">
+						<div class="col-md-12 panelTop">
+							<div class="col-md-4">
+								<img class="img-responsive" src="http://placehold.it/350x350" alt=""/>
+							</div>
+							<div class="col-md-8">
+								<h2>{{ object.name }}</h2>
+								<p>{{ object.description }}</p>
+							</div>
+						</div>
+
+						<div class="col-md-12 panelBottom">
+							<div class="col-md-4 text-center">
+								<a href="/product/iphonex/vote" class="btn btn-lg btn-add-to-cart"><span class="glyphicon glyphicon-shopping-cart"></span>Like {{ object.rate }}</a>
+							</div>
+							<div class="col-md-4 text-left">
+								<h5>Price <span class="itemPrice">${{ object.price }}</span></h5>
+                                <h6>Added: <span>{{ object.created_at }}</span></h6>
+							</div>
+							<div class="col-md-4">
+								<div class="stars">
+								 <div id="stars" class="starrr"></div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+         {% if messages %}
             <ul class="messages">
                 {% for message in messages %}
                     <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
                 {% endfor %}
             </ul>
         {% endif %}
-<p>Comments</p>
-    {% for comment in comments %}
-<div>{{ comment.user }}</div>
-        <div>{{ comment.message }}</div>
-        <br>
-{% endfor %}
-<div>
-<form method='post' class="form" role="form" action="{% url 'product' object.slug %}">
+        <form method='post' class="form-inline" role="form" action="{% url 'product' object.slug %}">
             {% csrf_token %}
             {{ form.non_field_errors }}
             <div class="form-group">
-                {{ form.user.label_tag }} {{ form.user }}
+                {% load widget_tweaks %}
+                {{ form.message | add_class:"form-control"}}
             </div>
             <div class="form-group">
-                {{ form.product.label_tag }} {{ form.product }}
+                <input type="submit" class="btn btn-default" value="Add"/>
             </div>
-            <div class="form-group">
-                {{ form.message.label_tag }} {{ form.message }}
-            </div>
-            <div class="form-group">
-                {{ form.rate.label_tag }} {{ form.rate }}
-            </div>
-    <br>
-    <input type="submit" class="btn btn-primary" value="Send"/>
-    <br>
 </form>
+<div class="row">
+<div class="col-sm-12">
+<h3>Comments</h3>
+</div><!-- /col-sm-12 -->
+</div><!-- /row -->
+    {% for comment in comments reversed %}
+
+<div class="row">
+<div class="col-sm-1">
+<div class="thumbnail">
+<img class="img-responsive user-photo" src="https://ssl.gstatic.com/accounts/ui/avatar_2x.png">
+</div><!-- /thumbnail -->
+</div><!-- /col-sm-1 -->
+
+<div class="col-sm-5">
+<div class="panel panel-default">
+<div class="panel-heading">
+<strong>{{ comment.user }}</strong> <span class="text-muted">{{ comment.time_edit }}</span>
+</div>
+<div class="panel-body">
+{{ comment.message }}
+</div>
+</div><!-- /panel-body -->
+</div><!-- /panel panel-default -->
+</div><!-- /col-sm-5 -->
+
+
+        <br>
+{% endfor %}
+        </div><!-- /container -->
+<div>
 </div>
 
 </section>

@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 """
 
 import os
+from django.conf import settings
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -44,9 +45,10 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.facebook',
     'prod',
     'bootstrap3',
+    'widget_tweaks',
 ]
 
-SITE_ID = 1
+SITE_ID = 2
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -75,6 +77,8 @@ TEMPLATES = [
         },
     },
 ]
+
+AUTH_USER_MODEL = 'prod.User'
 
 LOGIN_REDIRECT_URL = '/'
 SOCIALACCOUNT_QUERY_EMAIL = True
@@ -137,7 +141,7 @@ SOCIALACCOUNT_PROVIDERS = {
             'updated_time',
         ],
         'EXCHANGE_TOKEN': True,
-        'LOCALE_FUNC': 'path.to.callable',
+        'LOCALE_FUNC': lambda request: 'en-US',
         'VERIFIED_EMAIL': False,
         'VERSION': 'v2.5',
     }
@@ -175,3 +179,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 STATIC_URL = '/static/'
+
+ACCOUNT_EMAIL_REQUIRED=False
+ACCOUNT_USERNAME_REQURIED=True

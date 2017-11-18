@@ -1,5 +1,5 @@
 from django.contrib import admin
-from prod.models import Product, Comment, User
+from prod.models import Product, Comment, User, Vote
 
 
 class ProductAdmin(admin.ModelAdmin):
@@ -26,15 +26,19 @@ class CommentAdmin(admin.ModelAdmin):
 
 class UserAdmin(admin.ModelAdmin):
     fieldsets = [
-        ('name', {'fields': ['name']}),
+        ('username', {'fields': ['username']}),
         ('email', {'fields': ['email']}),
         ('bio', {'fields': ['bio']}),
 
     ]
-    list_display = ('name', 'email')
-    search_fields = ["name"]
+    list_display = ('username', 'email')
+    search_fields = ["username"]
+
+class VoteAdmin(admin.ModelAdmin):
+    list_display = ('product', 'author', 'rate')
 
 
 admin.site.register(User, UserAdmin)
 admin.site.register(Product, ProductAdmin)
 admin.site.register(Comment, CommentAdmin)
+admin.site.register(Vote, VoteAdmin)

@@ -1,5 +1,7 @@
 from django.db import models
 from django.core.urlresolvers import reverse
+from django.contrib.auth.models import AbstractUser
+
 
 class Product(models.Model):
     name = models.CharField(max_length=200)
@@ -16,17 +18,15 @@ class Product(models.Model):
     def get_absolute_url(self):
         return reverse('product', args=[str(self.slug)])
 
-class User(models.Model):
-    name = models.SlugField(unique=True)
-    password = models.CharField(max_length=10)
-    email = models.EmailField(unique=True)
+class User(AbstractUser):
     avatar_url = models.URLField()
     bio = models.TextField()
     rate = models.IntegerField(default=0)
-    reg_date = models.DateTimeField(auto_now_add=True)
+
+    REQUIRED_FIELDS = ["email"]
 
     def __str__(self):
-        return self.name
+        return self.username
 
     def get_absolute_url(self):
         return reverse('user', args=[str(self.slug)])

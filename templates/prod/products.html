@@ -4,6 +4,7 @@
 <section>
 <p>Products</p>
 {% for p in object_list %}
+
 <div><a href="{% url 'product' p.slug %}">{{p.name}}</a> {{ p.price }} {{p.descriotion}} {{ p.rate }}</div>
 {% endfor %}
 </section>

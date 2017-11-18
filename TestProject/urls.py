@@ -15,11 +15,12 @@ Including another URLconf
 """
 from django.conf.urls import url, include
 from django.contrib import admin
-from prod.views import IndexView, ProductView, vote
+from prod.views import index, ProductView, vote, ProductsView
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^products', IndexView.as_view(), name='index'),
+    url(r'^products', ProductsView.as_view(), name='products'),
+    url(r'^$', index, name='index'),
     url(r'^product/(?P<slug>[\w-]+)/$', ProductView.as_view(), name='product'),
     url(r'^accounts/', include('allauth.urls')),
     url(r'^product/(?P<slug>[\w-]+)/vote/$', vote, name='vote')

@@ -1,7 +1,4 @@
 {% load staticfiles %}
-{% load bootstrap3 %}
-{% bootstrap_css %}
-{% bootstrap_javascript %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,36 +9,36 @@
     <meta name="viewport" content="initial-scale=1.0, width=device-width"/>
     <meta name="apple-mobile-web-app-capable" content="yes"/>
     <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+    <link rel="stylesheet" href="https://code.jquery.com/jquery-3.2.1.slim.min.js">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.js"></script>
+{% load bootstrap3 %}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.css">
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.js"></script>
     <script src="http://malsup.github.io/min/jquery.form.min.js"></script>
-    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.js"></script>
+        <!-- <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.js"></script> -->
 
 {% block extra_head %}{% endblock extra_head %}
 </head>
+<body>
 {% load socialaccount %}
-<a href="{% provider_login_url "facebook" method="oauth2" %}">Facebook OAuth2</a>
-<body class="{% if request.user.is_authenticated %}logged-in{% else %}logged-out{% endif %}">
+<div class="container">
 {% if request.user.is_authenticated %}
     <a href="/accounts/logout/" class="pull-right">Logout</a>
+    <a href="#" class="btn btn-fb"><i class="fa fa-facebook"></i> Facebook</a>
     {% if request.user.first_name or request.user.last_name %}
         {{ request.user.first_name }} {{ request.user.last_name }}
     {% else %}
         {{ request.user.username }}
     {% endif %}
-    {% if request.user.profile.account_verified %} (verified) {% else %} (unverified) {% endif %}
-
 {% else %}
-    <a href="/accounts/login/" class="pull-right">Login</a>
-{% endif %}
-{% block content %}{% endblock content %}
-<div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel"
-     aria-hidden="true" data-refresh='true'>
-    <div class="modal-dialog">
-        <div class="modal-content">
-        </div>
+    <a href="{% provider_login_url "facebook" method="oauth2" %}">Login</a>
+    <div class="social-buttons">
+									<a href="#" class="btn btn-fb"><i class="fa fa-facebook"></i> Facebook</a>
     </div>
+{% endif %}
 </div>
+{% block content %}{% endblock content %}
 </body>
 </html>

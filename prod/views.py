@@ -12,9 +12,22 @@ from django.http import Http404
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse, HttpResponseForbidden
 from django import forms
+from django.dispatch import receiver
+from allauth.account.signals import user_signed_up
+from django.utils import timezone
+from django.contrib.auth.decorators import login_required
 
+@receiver(user_signed_up)
+def set_gender(sender, **kwargs):
+    user = kwargs.pop('user')
+    extra_data = user.socialaccount_set.filter(provider='facebook')[0].extra_data
+    gender = extra_data['gender']
+    print(gender)
 
-class IndexView(ListView):
+def index(request):
+    return redirect('products')
+
+class ProductsView(ListView):
     template_name = 'prod/products.html'
     context_object_name = 'products'
 
@@ -33,11 +46,13 @@ class ProductView(DetailView, FormMixin):
 
     def get_context_data(self, **kwargs):
         context = super(ProductView, self).get_context_data(**kwargs)
-        products = get_object_or_404(Product, slug__iexact=self.kwargs['slug'])
-        context['comments'] = Comment.objects.all().filter(product=products)
+        product = get_object_or_404(Product, slug__iexact=self.kwargs['slug'])
+        time_threshold = timezone.now() - timezone.timedelta(hours=24)
+        context['comments'] = Comment.objects.all().filter(product=product, time_edit__gt=time_threshold)
+        print(context['comments'])
         context['slug'] = self.kwargs['slug']
         try:
-            context['liked'] = get_object_or_404(Vote, author_id=self.request.user.id, product_id=products).rate
+            context['liked'] = get_object_or_404(Vote, author_id=self.request.user.id, product_id=product).rate
         except Http404:
             context['liked'] = False
         return context
@@ -45,53 +60,43 @@ class ProductView(DetailView, FormMixin):
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
         form = self.get_form()
-        print(form.errors)
         if form.is_valid():
-            print("___helo")
             return self.form_valid(form)
         else:
-            print("___helos")
-            print(form.cleaned_data)
             return self.form_invalid(form)
 
     def form_valid(self, form):
         form = form.cleaned_data
-        print(form)
-        Comment(user=User.objects.get(name='dron'), product=Product.objects.get(slug=self.object.slug),
+        user = 'krop'
+        if self.request.user.is_authenticated:
+            user = self.request.user
+        Comment(user=User.objects.get(username=user), product=Product.objects.get(slug=self.object.slug),
                 message=form.get('message')).save()
         return super(ProductView, self).form_valid(form)
 
     def form_invalid(self, form):
         return super(ProductView, self).form_invalid(form)
 
-
+@login_required
 def vote(request, slug):
     p = get_object_or_404(Product, slug__iexact=slug)
     product_id = Product.objects.get(slug=slug).pk
     context = {}
     try:
-        if request.user.is_authenticated():
-            try:
-                v = get_object_or_404(Vote, author_id=request.user.id, product_id=product_id)
-                v.rate = not v.rate
-                if v.rate:
-                    p.rate -= 1
-                else:
-                    p.rate += 1
-                v.save()
-                p.save()
-            except Http404:
-                v = Vote(rate=True, product_id=product_id, author_id=request.user.id)
-                p.rate += 1
-                v.save()
-                p.save()
-            finally:
-                context['rate'] = p.rate
-            return render_to_json_response(context, status=200)
+        v = get_object_or_404(Vote, author_id=request.user.id, product_id=product_id)
+        if v.rate:
+            p.rate -= 1
         else:
-            context = {'errors': "User is not authenticated"}
-            return render_to_json_response(context, status=200)
+            p.rate += 1
+        v.rate = not v.rate
+        v.save()
+        p.save()
+    except Http404:
+        v = Vote(rate=True, product_id=product_id, author_id=request.user.id)
+        p.rate += 1
+        v.save()
+        p.save()
+    finally:
+        context['rate'] = p.rate
+    return render_to_json_response(context, status=200)
 
-    except (KeyError, Product.DoesNotExist):
-        context = {'errors': "User is not authenticated"}
-        return render_to_json_response(context, status=200)
