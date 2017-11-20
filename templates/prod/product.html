@@ -21,7 +21,7 @@
 
 						<div class="col-md-12 panelBottom">
 							<div class="col-md-4 text-center">
-								<button href="#" id="likebut" onclick="updateLike()" class="btn btn-lg btn-add-to-cart"><span id="likeicon" class="glyphicon {% if liked %}glyphicon-thumbs-up{% else %}glyphicon-thumbs-down{% endif %}"></span>{{ object.rate }}</button>
+								<button href="#" id="likebut" {% if not request.user.is_authenticated %}disabled{% endif %} onclick="updateLike('vote')" class="btn btn-lg btn-add-to-cart"><span id="likeicon" class="glyphicon {% if liked %}glyphicon-thumbs-up{% else %}glyphicon-thumbs-down{% endif %}">  {{ object.rate }}</span></button>
 							</div>
 							<div class="col-md-4 text-left">
 								<h5>Price <span class="itemPrice">${{ object.price }}</span></h5>

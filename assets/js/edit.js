@@ -1,18 +1,11 @@
 
-function updateLike() {
-    $.get("/product/iphonex/vote", function (data, status) {
-        //document.getElementById('likebut').innerHTML = "Like " + data.rate;
-        //document.getElementById('likebut').style.backgroundColor = "#cd001d";
-        if(document.getElementById('likeicon').className=='glyphicon glyphicon-thumbs-up'){
-            document.getElementById('likeicon').className = "glyphicon glyphicon-thumbs-down";
-        } else {
+function updateLike(url) {
+    $.get(url, function (data, status) {
+        if(data.liked){
             document.getElementById('likeicon').className = "glyphicon glyphicon-thumbs-up";
+        } else {
+            document.getElementById('likeicon').className = "glyphicon glyphicon-thumbs-down";
         }
-        document.getElementById('likebut').textContent+=data.rate;
-        //document.getElementById('likeicon').className = "glyphicon glyphicon-thumbs-up";
-        //$('#likebut').attr('background-color',"#cd001d");
-        //ata.rate
-        console.log(data);
-        console.log(status);
+        document.getElementById('likeicon').textContent= " " + data.rate;
     })
 }

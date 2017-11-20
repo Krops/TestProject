@@ -18,6 +18,7 @@ class Product(models.Model):
     def get_absolute_url(self):
         return reverse('product', args=[str(self.slug)])
 
+
 class User(AbstractUser):
     avatar_url = models.URLField()
     bio = models.TextField()
@@ -31,6 +32,7 @@ class User(AbstractUser):
     def get_absolute_url(self):
         return reverse('user', args=[str(self.slug)])
 
+
 class Comment(models.Model):
     time_post = models.DateTimeField(auto_now_add=True)
     time_edit = models.DateTimeField(auto_now=True)
@@ -39,7 +41,8 @@ class Comment(models.Model):
     message = models.TextField()
     rate = models.IntegerField(default=0)
 
+
 class Vote(models.Model):
-    product = models.ForeignKey(Product,default=1)
-    author = models.ForeignKey(User,default=1)
+    product = models.ForeignKey(Product, default=1)
+    author = models.ForeignKey(User, default=1)
     rate = models.BooleanField('Liked')

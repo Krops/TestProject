@@ -1,0 +1,5 @@
+django
+django-allauth
+django-widget-tweaks
+psycopg2
+django-bootstrap3

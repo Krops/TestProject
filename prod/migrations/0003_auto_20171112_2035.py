@@ -16,6 +16,9 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='comment',
             name='user',
-            field=models.ForeignKey(default='dron', on_delete=django.db.models.deletion.CASCADE, to='prod.User'),
+            field=models.ForeignKey(
+                default='dron',
+                on_delete=django.db.models.deletion.CASCADE,
+                to='prod.User'),
         ),
     ]

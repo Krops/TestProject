@@ -24,6 +24,7 @@ class CommentAdmin(admin.ModelAdmin):
     list_display = ('user', 'message')
     search_fields = ["message"]
 
+
 class UserAdmin(admin.ModelAdmin):
     fieldsets = [
         ('username', {'fields': ['username']}),
@@ -33,6 +34,7 @@ class UserAdmin(admin.ModelAdmin):
     ]
     list_display = ('username', 'email')
     search_fields = ["username"]
+
 
 class VoteAdmin(admin.ModelAdmin):
     list_display = ('product', 'author', 'rate')

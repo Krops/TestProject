@@ -4,28 +4,17 @@ from django.views.generic.detail import DetailView
 from django.shortcuts import get_object_or_404
 from django.views.generic.edit import FormMixin
 from prod.forms import CommentForm
-from prod.utils import render_to_json_response, convert_context_to_json
+from prod.utils import render_to_json_response
 from prod.models import User
 from django.shortcuts import redirect, reverse
-from django.contrib import messages
 from django.http import Http404
-from django.contrib.auth import authenticate, login, logout
-from django.http import HttpResponse, HttpResponseForbidden
-from django import forms
-from django.dispatch import receiver
-from allauth.account.signals import user_signed_up
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 
-@receiver(user_signed_up)
-def set_gender(sender, **kwargs):
-    user = kwargs.pop('user')
-    extra_data = user.socialaccount_set.filter(provider='facebook')[0].extra_data
-    gender = extra_data['gender']
-    print(gender)
 
 def index(request):
     return redirect('products')
+
 
 class ProductsView(ListView):
     template_name = 'prod/products.html'
@@ -48,11 +37,12 @@ class ProductView(DetailView, FormMixin):
         context = super(ProductView, self).get_context_data(**kwargs)
         product = get_object_or_404(Product, slug__iexact=self.kwargs['slug'])
         time_threshold = timezone.now() - timezone.timedelta(hours=24)
-        context['comments'] = Comment.objects.all().filter(product=product, time_edit__gt=time_threshold)
-        print(context['comments'])
+        context['comments'] = Comment.objects.all().filter(
+            product=product, time_edit__gt=time_threshold)
         context['slug'] = self.kwargs['slug']
         try:
-            context['liked'] = get_object_or_404(Vote, author_id=self.request.user.id, product_id=product).rate
+            context['liked'] = get_object_or_404(
+                Vote, author_id=self.request.user.id, product_id=product).rate
         except Http404:
             context['liked'] = False
         return context
@@ -70,20 +60,29 @@ class ProductView(DetailView, FormMixin):
         user = 'krop'
         if self.request.user.is_authenticated:
             user = self.request.user
-        Comment(user=User.objects.get(username=user), product=Product.objects.get(slug=self.object.slug),
-                message=form.get('message')).save()
+        Comment(
+            user=User.objects.get(
+                username=user),
+            product=Product.objects.get(
+                slug=self.object.slug),
+            message=form.get('message')).save()
         return super(ProductView, self).form_valid(form)
 
     def form_invalid(self, form):
         return super(ProductView, self).form_invalid(form)
 
+
 @login_required
 def vote(request, slug):
     p = get_object_or_404(Product, slug__iexact=slug)
+    v = False
     product_id = Product.objects.get(slug=slug).pk
     context = {}
     try:
-        v = get_object_or_404(Vote, author_id=request.user.id, product_id=product_id)
+        v = get_object_or_404(
+            Vote,
+            author_id=request.user.id,
+            product_id=product_id)
         if v.rate:
             p.rate -= 1
         else:
@@ -98,5 +97,5 @@ def vote(request, slug):
         p.save()
     finally:
         context['rate'] = p.rate
+        context['liked'] = v.rate
     return render_to_json_response(context, status=200)
-
