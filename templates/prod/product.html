@@ -2,6 +2,8 @@
 {% block title %}Product: {{object.name}}{% endblock %}
 {% block content %}
 <section>
+  {% load staticfiles %}
+<script src="{% static 'js/edit.js' %}"></script>
         <div class="container">
         <div class="row">
 			<div class="col-md-8">
@@ -19,7 +21,7 @@
 
 						<div class="col-md-12 panelBottom">
 							<div class="col-md-4 text-center">
-								<a href="/product/iphonex/vote" class="btn btn-lg btn-add-to-cart"><span class="glyphicon glyphicon-shopping-cart"></span>Like {{ object.rate }}</a>
+								<button href="#" id="likebut" onclick="updateLike()" class="btn btn-lg btn-add-to-cart"><span id="likeicon" class="glyphicon {% if liked %}glyphicon-thumbs-up{% else %}glyphicon-thumbs-down{% endif %}"></span>{{ object.rate }}</button>
 							</div>
 							<div class="col-md-4 text-left">
 								<h5>Price <span class="itemPrice">${{ object.price }}</span></h5>
