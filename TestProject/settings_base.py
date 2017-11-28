@@ -67,7 +67,6 @@ INSTALLED_APPS = [
     'bootstrap3',
     'widget_tweaks',
     'django_cleanup',
-    'sorl.thumbnail',
     'django_prices',
 ]
 
@@ -196,9 +195,7 @@ STATICFILES_DIRS = (
 
 MEDIA_ROOT = BASE_DIR
 MEDIA_URL = '/media/'
-FIXTURE_DIRS = (
-    os.path.join(BASE_DIR, 'prod/fixtures'),
-)
+FIXTURE_DIRS = 'fixtures'
 
 ACCOUNT_EMAIL_REQUIRED = False
 ACCOUNT_USERNAME_REQURIED = True

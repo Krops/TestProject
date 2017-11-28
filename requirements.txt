@@ -3,3 +3,6 @@ django-allauth
 django-widget-tweaks
 psycopg2
 django-bootstrap3
+django-resized
+django-cleanup
+django_prices
