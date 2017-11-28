@@ -16,12 +16,14 @@ Including another URLconf
 from django.conf.urls import url, include
 from django.contrib import admin
 from prod.views import index, ProductView, vote, ProductsView
+from django.conf.urls.static import static
+from django.conf import settings
 
 urlpatterns = [
-    url(r'^admin/', admin.site.urls),
-    url(r'^products', ProductsView.as_view(), name='products'),
-    url(r'^$', index, name='index'),
-    url(r'^product/(?P<slug>[\w-]+)/$', ProductView.as_view(), name='product'),
-    url(r'^accounts/', include('allauth.urls')),
-    url(r'^product/(?P<slug>[\w-]+)/vote/$', vote, name='vote')
-]
+                  url(r'^admin/', admin.site.urls),
+                  url(r'^products', ProductsView.as_view(), name='products'),
+                  url(r'^$', index, name='index'),
+                  url(r'^product/(?P<slug>[\w-]+)/$', ProductView.as_view(), name='product'),
+                  url(r'^accounts/', include('allauth.urls')),
+                  url(r'^product/(?P<slug>[\w-]+)/vote/$', vote, name='vote')
+              ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

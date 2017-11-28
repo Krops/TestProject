@@ -65,7 +65,7 @@ class ProductView(DetailView, FormMixin):
                 username=user),
             product=Product.objects.get(
                 slug=self.object.slug),
-            message=form.get('message')).save()
+            form_message=form.get('form_message'), rate=0).save()
         return super(ProductView, self).form_valid(form)
 
     def form_invalid(self, form):

@@ -11,23 +11,43 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 """
 
 import os
+import json
 from django.conf import settings
+from django.core.exceptions import ImproperlyConfigured
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '%ic*#%sxzmcg(@t@tdowy*4s*3+e*q!i6rxcid#7q$d!zocem3'
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+
+
+
+
+with open(os.environ.get('MYSITE_CONFIG')) as f:
+    configs = json.loads(f.read())
+
+
+def get_env_var(setting, configs=configs):
+    try:
+        val = configs[setting]
+        if val == 'True':
+            val = True
+        elif val == 'False':
+            val = False
+        return val
+    except KeyError:
+        error_msg = "ImproperlyConfigured: Set {0} environment      variable".format(setting)
+        raise ImproperlyConfigured(error_msg)
+
+
+# get secret key
+SECRET_KEY = get_env_var("SECRET_KEY")
 
 ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -46,6 +66,9 @@ INSTALLED_APPS = [
     'prod',
     'bootstrap3',
     'widget_tweaks',
+    'django_cleanup',
+    'sorl.thumbnail',
+    'django_prices',
 ]
 
 SITE_ID = 2
@@ -90,18 +113,6 @@ SOCIALACCOUNT_PROVIDERS = {
 }
 
 WSGI_APPLICATION = 'TestProject.wsgi.application'
-
-
-# Database
-# https://docs.djangoproject.com/en/1.11/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
-}
-
 
 # Password validation
 # https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators
@@ -174,7 +185,6 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
@@ -184,5 +194,11 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'assets'),
 )
 
-ACCOUNT_EMAIL_REQUIRED=False
-ACCOUNT_USERNAME_REQURIED=True
+MEDIA_ROOT = BASE_DIR
+MEDIA_URL = '/media/'
+FIXTURE_DIRS = (
+    os.path.join(BASE_DIR, 'prod/fixtures'),
+)
+
+ACCOUNT_EMAIL_REQUIRED = False
+ACCOUNT_USERNAME_REQURIED = True

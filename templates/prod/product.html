@@ -1,92 +1,102 @@
 {% extends "base.html" %}
-{% block title %}Product: {{object.name}}{% endblock %}
+{% block title %}Product: {{ object.name }}{% endblock %}
 {% block content %}
-<section>
-  {% load staticfiles %}
-<script src="{% static 'js/edit.js' %}"></script>
+    <section>
+        {% load staticfiles %}
+        <script src="{% static 'js/edit.js' %}"></script>
+        {% load prices %}
         <div class="container">
-        <div class="row">
-			<div class="col-md-8">
-				<div class="panel panel-default  panel--styled">
-					<div class="panel-body">
-						<div class="col-md-12 panelTop">
-							<div class="col-md-4">
-								<img class="img-responsive" src="http://placehold.it/350x350" alt=""/>
-							</div>
-							<div class="col-md-8">
-								<h2>{{ object.name }}</h2>
-								<p>{{ object.description }}</p>
-							</div>
-						</div>
-
-						<div class="col-md-12 panelBottom">
-							<div class="col-md-4 text-center">
-								<button href="#" id="likebut" {% if not request.user.is_authenticated %}disabled{% endif %} onclick="updateLike('vote')" class="btn btn-lg btn-add-to-cart"><span id="likeicon" class="glyphicon {% if liked %}glyphicon-thumbs-up{% else %}glyphicon-thumbs-down{% endif %}">  {{ object.rate }}</span></button>
-							</div>
-							<div class="col-md-4 text-left">
-								<h5>Price <span class="itemPrice">${{ object.price }}</span></h5>
-                                <h6>Added: <span>{{ object.created_at }}</span></h6>
-							</div>
-							<div class="col-md-4">
-								<div class="stars">
-								 <div id="stars" class="starrr"></div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-         {% if messages %}
-            <ul class="messages">
-                {% for message in messages %}
-                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-                {% endfor %}
-            </ul>
-        {% endif %}
-        <form method='post' class="form-inline" role="form" action="{% url 'product' object.slug %}">
-            {% csrf_token %}
-            {{ form.non_field_errors }}
-            <div class="form-group">
-                {% load widget_tweaks %}
-                {{ form.message | add_class:"form-control"}}
+            <div class="well well-sm">
+                <strong><a href="/products">Back to Products</a></strong>
             </div>
-            <div class="form-group">
-                <input type="submit" class="btn btn-default" value="Add"/>
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="panel panel-default  panel--styled">
+                        <div class="panel-body">
+                            <div class="col-md-12 panelTop">
+                                <div class="col-md-4">
+                                    <img class="img-responsive" src="{{ object.cover.url }}" alt=""/>
+                                </div>
+                                <div class="col-md-8">
+                                    <h2>{{ object.name }}</h2>
+                                    <p>{{ object.description }}</p>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12 panelBottom">
+                                <div class="col-md-4 text-center">
+                                    <button href="#" id="likebut"
+                                            {% if not request.user.is_authenticated %}disabled{% endif %}
+                                            onclick="updateLike('vote')" class="btn btn-lg btn-add-to-cart"><span
+                                            id="likeicon"
+                                            class="glyphicon {% if liked %}glyphicon-thumbs-up{% else %}glyphicon-thumbs-down{% endif %}">  {{ object.rate }}</span>
+                                    </button>
+                                </div>
+                                <div class="col-md-4 text-left">
+                                    <h5>Price:<span class="itemPrice">{% gross object.price %}</span></h5>
+                                    <h6>Added: <span>{{ object.created_at }}</span></h6>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="stars">
+                                        <div id="stars" class="starrr"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-</form>
-<div class="row">
-<div class="col-sm-12">
-<h3>Comments</h3>
-</div><!-- /col-sm-12 -->
-</div><!-- /row -->
-    {% for comment in comments reversed %}
+            {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+            <form method='post' class="form-inline" role="form" action="{% url 'product' object.slug %}">
+                {% csrf_token %}
+                {{ form.non_field_errors }}
+                <div class="form-group">
+                    {% load widget_tweaks %}
+                    {{ form.form_message | add_class:"form-control"|attr:"name:form_message"|attr:"id:form_message" }}
+                </div>
+                <div class="form-group">
+                    <input type="submit" class="btn btn-default" value="Add"/>
+                </div>
+            </form>
+            <div class="row">
+                <div class="col-sm-12">
+                    <h3>Comments</h3>
+                </div><!-- /col-sm-12 -->
+            </div><!-- /row -->
+            {% for comment in comments reversed %}
 
-<div class="row">
-<div class="col-sm-1">
-<div class="thumbnail">
-<img class="img-responsive user-photo" src="https://ssl.gstatic.com/accounts/ui/avatar_2x.png">
-</div><!-- /thumbnail -->
-</div><!-- /col-sm-1 -->
+                <div class="row">
+                    <div class="col-sm-1">
+                        <div class="thumbnail">
+                            <img class="img-responsive user-photo" src="{{ comment.user.cover.url }}">
+                        </div><!-- /thumbnail -->
+                    </div><!-- /col-sm-1 -->
 
-<div class="col-sm-5">
-<div class="panel panel-default">
-<div class="panel-heading">
-<strong>{{ comment.user }}</strong> <span class="text-muted">{{ comment.time_edit }}</span>
-</div>
-<div class="panel-body">
-{{ comment.message }}
-</div>
-</div><!-- /panel-body -->
-</div><!-- /panel panel-default -->
-</div><!-- /col-sm-5 -->
+                    <div class="col-sm-5">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <strong>{{ comment.user }}</strong> <span
+                                    class="text-muted">{{ comment.time_edit }}</span>
+                            </div>
+                            <div class="panel-body">
+                                {{ comment.form_message }}
+                            </div>
+                        </div><!-- /panel-body -->
+                    </div><!-- /panel panel-default -->
+                </div><!-- /col-sm-5 -->
 
 
-        <br>
-{% endfor %}
+                <br>
+            {% endfor %}
         </div><!-- /container -->
-<div>
-</div>
+        <div>
+        </div>
 
-</section>
+    </section>
 {% endblock %}

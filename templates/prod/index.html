@@ -1,9 +1,0 @@
-{% extends "base.html" %}
-{% block content %}
-<section>
-<p>Index</p>
-<div><a href="{% url 'products' %}">Products</a></div>
-<div><a href="{% url 'admin:index' %}">Admin</a></div>
-<div><a href="{% url 'last' %}" data-toggle="modal" data-target="#modal" title="edit" data-tooltip class="fa fa-pencil">Last</a></div>
-</section>
-{% endblock %}

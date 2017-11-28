@@ -9,6 +9,7 @@ class ProductAdmin(admin.ModelAdmin):
         ('description', {'fields': ['description']}),
         ('price', {'fields': ['price']}),
         ('rate', {'fields': ['rate']}),
+        ('cover', {'fields': ['cover']}),
     ]
     list_display = ('name', 'slug', 'description', 'price', 'rate')
     search_fields = ["name"]
@@ -18,11 +19,11 @@ class CommentAdmin(admin.ModelAdmin):
     fieldsets = [
         ('user', {'fields': ['user']}),
         ('product', {'fields': ['product']}),
-        ('message', {'fields': ['message']}),
+        ('form_message', {'fields': ['form_message']}),
 
     ]
-    list_display = ('user', 'message')
-    search_fields = ["message"]
+    list_display = ('user', 'form_message')
+    search_fields = ["form_message"]
 
 
 class UserAdmin(admin.ModelAdmin):
@@ -30,6 +31,7 @@ class UserAdmin(admin.ModelAdmin):
         ('username', {'fields': ['username']}),
         ('email', {'fields': ['email']}),
         ('bio', {'fields': ['bio']}),
+        ('cover', {'fields': ['cover']}),
 
     ]
     list_display = ('username', 'email')
